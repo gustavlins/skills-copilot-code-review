@@ -672,3 +672,178 @@ footer {
   padding: 15px;
   font-weight: bold;
 }
+
+/* ── Announcements Management ─────────────────────────────────── */
+
+.announcements-modal-content {
+  max-width: 640px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.announcement-form-section {
+  background-color: var(--background);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+}
+
+.announcement-form-section h4,
+.announcement-list-section h4 {
+  color: var(--primary);
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.announcement-form-section textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: Arial, sans-serif;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.announcement-form-section textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px rgba(83, 75, 174, 0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 140px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.optional-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+.required-label {
+  color: var(--error);
+  font-weight: bold;
+}
+
+.secondary-btn {
+  background-color: var(--background);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.secondary-btn:hover {
+  background-color: var(--border);
+}
+
+/* Announcement admin list items */
+.announcement-admin-item {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background-color: var(--surface);
+  transition: box-shadow 0.2s;
+}
+
+.announcement-admin-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.announcement-admin-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.announcement-admin-message {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.announcement-admin-dates {
+  display: flex;
+  gap: 16px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.announcement-admin-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+  line-height: 1.4;
+}
+
+.icon-btn:hover {
+  background-color: var(--background);
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-active {
+  background-color: var(--success-light);
+  color: var(--success);
+}
+
+.status-expired {
+  background-color: var(--error-light);
+  color: var(--error);
+}
+
+.status-scheduled {
+  background-color: var(--warning-light);
+  color: var(--warning);
+}
+
+.loading-text,
+.empty-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 12px 0;
+}
