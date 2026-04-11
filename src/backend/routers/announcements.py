@@ -2,7 +2,10 @@
 Announcements endpoints for the High School Management System API
 """
 
-from fastapi import APIRouter, HTTPException, Query
+import hmac
+import os
+
+from fastapi import APIRouter, HTTPException, Query, Header
 from typing import Dict, Any, Optional, List
 from bson import ObjectId
 from datetime import date
@@ -21,7 +24,18 @@ def _serialize(doc: dict) -> dict:
     return doc
 
 
-def _require_teacher(teacher_username: str):
+def _require_teacher(teacher_username: str, authorization: Optional[str]):
+    expected_token = os.environ.get("ANNOUNCEMENTS_MANAGEMENT_TOKEN")
+    if not expected_token:
+        raise HTTPException(status_code=500, detail="Management authentication is not configured")
+
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    provided_token = authorization[len("Bearer "):].strip()
+    if not provided_token or not hmac.compare_digest(provided_token, expected_token):
+        raise HTTPException(status_code=401, detail="Authentication required")
+
     teacher = teachers_collection.find_one({"_id": teacher_username})
     if not teacher:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -44,9 +58,12 @@ def get_active_announcements():
 
 
 @router.get("/all", response_model=List[Dict[str, Any]])
-def get_all_announcements(teacher_username: str = Query(...)):
+def get_all_announcements(
+    teacher_username: str = Query(...),
+    authorization: Optional[str] = Header(None)
+):
     """Return all announcements regardless of dates. Requires authentication."""
-    _require_teacher(teacher_username)
+    _require_teacher(teacher_username, authorization)
     return [_serialize(a) for a in announcements_collection.find()]
 
 
@@ -55,10 +72,11 @@ def create_announcement(
     message: str,
     expiration_date: str,
     teacher_username: str = Query(...),
-    start_date: Optional[str] = None
+    start_date: Optional[str] = None,
+    authorization: Optional[str] = Header(None)
 ):
     """Create a new announcement. Requires authentication."""
-    _require_teacher(teacher_username)
+    _require_teacher(teacher_username, authorization)
 
     doc = {
         "message": message,
@@ -78,10 +96,11 @@ def update_announcement(
     message: str,
     expiration_date: str,
     teacher_username: str = Query(...),
-    start_date: Optional[str] = None
+    start_date: Optional[str] = None,
+    authorization: Optional[str] = Header(None)
 ):
     """Update an existing announcement. Requires authentication."""
-    _require_teacher(teacher_username)
+    _require_teacher(teacher_username, authorization)
 
     try:
         oid = ObjectId(announcement_id)
@@ -107,10 +126,11 @@ def update_announcement(
 @router.delete("/{announcement_id}")
 def delete_announcement(
     announcement_id: str,
-    teacher_username: str = Query(...)
+    teacher_username: str = Query(...),
+    authorization: Optional[str] = Header(None)
 ):
     """Delete an announcement. Requires authentication."""
-    _require_teacher(teacher_username)
+    _require_teacher(teacher_username, authorization)
 
     try:
         oid = ObjectId(announcement_id)
