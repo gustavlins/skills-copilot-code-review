@@ -945,18 +945,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Render the admin list of announcements
+  function getLocalTodayDate() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  function parseLocalDateString(dateString) {
+    if (!dateString || typeof dateString !== "string") {
+      return null;
+    }
+
+    const parts = dateString.split("-");
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const year = Number(parts[0]);
+    const monthIndex = Number(parts[1]) - 1;
+    const day = Number(parts[2]);
+
+    if (!Number.isInteger(year) || !Number.isInteger(monthIndex) || !Number.isInteger(day)) {
+      return null;
+    }
+
+    const parsedDate = new Date(year, monthIndex, day);
+    if (
+      Number.isNaN(parsedDate.getTime()) ||
+      parsedDate.getFullYear() !== year ||
+      parsedDate.getMonth() !== monthIndex ||
+      parsedDate.getDate() !== day
+    ) {
+      return null;
+    }
+
+    parsedDate.setHours(0, 0, 0, 0);
+    return parsedDate;
+  }
+
   function renderAdminAnnouncementList(announcements) {
     if (announcements.length === 0) {
       announcementsAdminList.innerHTML = "<p class=\"empty-text\">No announcements yet.</p>";
       return;
     }
     announcementsAdminList.innerHTML = "";
+    const today = getLocalTodayDate();
     announcements.forEach((a) => {
       const item = document.createElement("div");
       item.className = "announcement-admin-item";
-      const today = new Date().toISOString().split("T")[0];
-      const isExpired = a.expiration_date < today;
-      const isNotStarted = a.start_date && a.start_date > today;
+      const expirationDate = parseLocalDateString(a.expiration_date);
+      const startDate = parseLocalDateString(a.start_date);
+      const isExpired = expirationDate ? expirationDate < today : false;
+      const isNotStarted = startDate ? startDate > today : false;
       let statusLabel = '<span class="status-badge status-active">Active</span>';
       if (isExpired) statusLabel = '<span class="status-badge status-expired">Expired</span>';
       else if (isNotStarted) statusLabel = '<span class="status-badge status-scheduled">Scheduled</span>';
